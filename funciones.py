@@ -1,4 +1,5 @@
 import numpy as np
+import scipy.linalg as sc
 
 A=np.array([[1,4,7],
            [2,5,8],
@@ -33,23 +34,29 @@ def inversaLU(L, U):
 
     Inv=np.zeros([dim,dim]).astype(float)
     
-    I = np.eye(dim)
-    
+    I_col = np.zeros([dim,1]).astype(float)
+    Inv_columnas=[]
     for columna in range(dim):
         
-        I_col = I[:,columna]
+        I_col[columna][0]=1
 
-        eta= U@I_col
-        Inv_col = L@eta
-        
-        Inv[:, columna] = Inv_col
-        
+        eta= sc.solve_triangular(L,I_col)
+        Inv_col = sc.solve_triangular(U,eta)
+        Inv_columnas.append(Inv_col)
+        I_col[columna][0]=0
+    
+    for columna in range(dim):
+        col_actual=Inv_columnas[columna]
+        for fila in range(dim):
+            Inv[fila][columna]=col_actual[fila][0]
     return Inv
 
 
 C = inversaLU(B[0], B[1])
 
-print(A@C)
+print(C)
+
+
 #%%
 
 import numpy as np
@@ -69,7 +76,7 @@ def calcularLU(A):
 
     #Vamos a triagunlar para que U sea triangular superior
     for fila in range(dim-1):
-        for rep in range(1,dim-fila): #En cada fila tengo que triangular N=(Dim-1-fila) filas
+        for rep in range(1,dim-fila): #En cada fila tengo que triangular N=(Dim-fila) filas
             multiplicador=U[rep+fila][fila]/U[fila][fila] #Calculo los multiplicadores           
             multiplicadores.append(multiplicador)
             U[fila+rep]=U[fila+rep]-multiplicador*U[fila] #Triangulo las filas que estan por debajo de la actual
