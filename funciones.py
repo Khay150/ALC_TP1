@@ -1,4 +1,5 @@
 import numpy as np
+from scipy.linalg import solve_triangular
 
 A=np.array([[1,4,7],
            [2,5,8],
@@ -31,20 +32,24 @@ B= calcularLU(A)
 def inversaLU(L, U):
     dim=L.shape[0]
 
-    Inv=np.zeros([dim,dim]).astype(float)
+    I_col = np.zeros([dim,1]).astype(float)
     
-    I = np.eye(dim)
+    UINV, LINV = np.zeros([dim, dim]).astype(float), np.eye(dim).astype(float)
     
     for columna in range(dim):
         
-        I_col = I[:,columna]
+        I_col[columna][0] = 1
+        
+        UINV_col = solve_triangular(U, I_col)
+        LINV_col = solve_triangular(L, I_col, lower = True)
+        
+        for j in range(dim):
+            UINV[j][columna] = UINV_col[j][0]
+            LINV[j][columna] = LINV_col[j][0]
 
-        eta= U@I_col
-        Inv_col = L@eta
+        I_col[columna][0] = 0
         
-        Inv[:, columna] = Inv_col
-        
-    return Inv
+    return UINV@LINV
 
 
 C = inversaLU(B[0], B[1])
