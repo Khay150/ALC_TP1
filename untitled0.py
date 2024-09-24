@@ -126,11 +126,10 @@ P_INV_VEN=inversaLU(P_VEN)
 # Ejercicio 7 Matrices Insumo-Producto
 A_VV= Z_VENVEN@P_INV_VEN
 
-A_VC = Z_VENCRI@P_INV_VEN
+A_VC = Z_VENCRI@P_INV_CRI
 
 A_CC= Z_CRICRI@P_INV_CRI
-
-A_CV = Z_CRIVEN@P_INV_CRI
+A_CV = Z_CRIVEN@P_INV_VEN
 
 #%% Completamos la A del sistema completo
 
@@ -163,9 +162,9 @@ d_VEN_shock_simple[7] = d_VEN_shock_simple[7]*1.033
 
 
 #Calculo del delta
-delta_d = d_VEN_shock_simple - d_VEN_simple
+delta_d_simple = d_VEN_shock_simple - d_VEN_simple
 #Calculamos la producción segun lo desarollado en consigna  4
-delta_p_simple= inversaLU(I - A_VV) @ delta_d
+delta_p_simple= inversaLU(I - A_VV) @ delta_d_simple
 
 p_prima_simple = Output_VEN + delta_p_simple
 
@@ -184,9 +183,9 @@ d_VEN_shock_completo[6] = d_VEN_shock_completo[6]*1.033
 d_VEN_shock_completo[7] = d_VEN_shock_completo[7]*1.033
 
 #sacamos el delta
-delta_d = d_VEN_shock_completo - d_VEN_completo
+delta_d_completo = d_VEN_shock_completo - d_VEN_completo
 #usamos la consigna 6 ya que la demanda Costa Rica no se modifica
-delta_p_completo = inversaLU(I-A_VV - A_VC @ inversaLU(I - A_CC) @ A_CV) @ delta_d
+delta_p_completo = inversaLU(I-A_VV - A_VC @ inversaLU(I - A_CC) @ A_CV) @ delta_d_completo
 
 p_prima_completo = Output_VEN + delta_p_completo
 
